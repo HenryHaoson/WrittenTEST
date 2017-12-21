@@ -19,5 +19,6 @@ public class EverydaySentenceHolder extends RecyclerView.ViewHolder {
     public EverydaySentenceHolder(View itemView) {
         super(itemView);
         everydayPic = itemView.findViewById(R.id.item_everyday_sentence_pic);
+        everydayPic.setClickable(false);
     }
 }
