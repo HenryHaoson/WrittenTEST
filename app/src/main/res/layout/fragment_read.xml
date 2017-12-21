@@ -9,10 +9,10 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.zhuhao.wordtextview.WordTextView
+        <com.henryhaoson.expendview.read.view.WordView.AutoResizeTextView
             android:id="@+id/read_wordtextview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:justificationMode="inter_word"/>
+            android:textSize="20sp" />
     </LinearLayout>
 </ScrollView>

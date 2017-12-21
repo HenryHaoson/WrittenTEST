@@ -2,9 +2,15 @@ package com.zhuhao.wordtextview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.text.Layout;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -22,6 +28,7 @@ import java.util.List;
  */
 
 public class WordTextView extends android.support.v7.widget.AppCompatTextView {
+
     private CharSequence mText;
     private TextView.BufferType mBufferType;
 
@@ -34,7 +41,14 @@ public class WordTextView extends android.support.v7.widget.AppCompatTextView {
     private int highlightColor;
     private String highlightText;
     private int selectedColor;
-    private int language;//0:english,1:chinese
+//    //0英语，1中文
+//    private int language;
+
+    //新增左右对其
+    private boolean justify=true;
+    private float textAreaWidth;
+    private float spaceCharSize;
+    private float lineY;
 
     public WordTextView(Context context) {
         this(context, null);
@@ -50,7 +64,7 @@ public class WordTextView extends android.support.v7.widget.AppCompatTextView {
         highlightColor = ta.getColor(R.styleable.WordTextView_highlightColor, Color.RED);
         highlightText = ta.getString(R.styleable.WordTextView_highlightText);
         selectedColor = ta.getColor(R.styleable.WordTextView_selectedColor, Color.BLUE);
-        language = ta.getInt(R.styleable.WordTextView_language, 0);
+//        language = ta.getInt(R.styleable.WordTextView_language, 0);
         ta.recycle();
     }
 
@@ -68,29 +82,28 @@ public class WordTextView extends android.support.v7.widget.AppCompatTextView {
         mSpannableString = new SpannableString(mText);
         //设置高亮Spannable
         setHighLightSpan(mSpannableString);
-        if (language == 0) {//deal english
-            dealEnglish();
-        } else {//deal chinese
-            dealChinese();
-        }
+//        if (language == 0) {
+//            dealEnglish();
+//        } else {
+//            dealChinese();
+//        }
         super.setText(mSpannableString, mBufferType);
 
     }
 
-    private void dealChinese() {
-        for (int i = 0; i < mText.length(); i++) {
-            char ch = mText.charAt(i);
-            if (WordUtils.isChinese(ch)) {
-                mSpannableString.setSpan(getClickableSpan(), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-        }
-    }
+//    private void dealChinese() {
+//        for (int i = 0; i < mText.length(); i++) {
+//            char ch = mText.charAt(i);
+//            if (WordUtils.isChinese(ch)) {
+//                mSpannableString.setSpan(getClickableSpan(), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//            }
+//        }
+//    }
 
     private void dealEnglish() {
         List<WordInfo> wordInfoList = WordUtils.getEnglishWordIndices(mText.toString());
         for (WordInfo wordInfo : wordInfoList) {
             mSpannableString.setSpan(getClickableSpan(), wordInfo.getStart(), wordInfo.getEnd(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
         }
     }
 
@@ -146,6 +159,80 @@ public class WordTextView extends android.support.v7.widget.AppCompatTextView {
             public void updateDrawState(TextPaint ds) {
             }
         };
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    @Override
+    protected void onDraw(Canvas canvas) {
+        drawText(canvas);
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    private void drawText(Canvas canvas) {
+        TextPaint paint = getPaint();
+        paint.setColor(getCurrentTextColor());
+        paint.drawableState = getDrawableState();
+        textAreaWidth = getMeasuredWidth() - (getPaddingLeft() + getPaddingRight());
+
+        spaceCharSize = paint.measureText(" ");
+
+        String text = mText.toString();
+        lineY = getTextSize();
+
+        Layout textLayout = getLayout();
+
+        if (textLayout == null)
+            return;
+
+        Paint.FontMetrics fm = paint.getFontMetrics();
+        int textHeight = (int) Math.ceil(fm.descent - fm.ascent);
+        textHeight = (int) (textHeight * getLineSpacingMultiplier() + textLayout.getSpacingAdd());
+
+        for (int i = 0; i < textLayout.getLineCount(); i++) {
+
+            int lineStart = textLayout.getLineStart(i);
+            int lineEnd = textLayout.getLineEnd(i);
+
+            float lineWidth = StaticLayout.getDesiredWidth(text, lineStart, lineEnd, paint);
+            String line = text.substring(lineStart, lineEnd);
+
+            if (line.charAt(line.length() - 1) == ' ') {
+                line = line.substring(0, line.length() - 1);
+            }
+
+            if (justify && i < textLayout.getLineCount() - 1) {
+                drawLineJustified(canvas, line, lineWidth);
+            } else {
+                canvas.drawText(line, 0, lineY, paint);
+            }
+            lineY += textHeight;
+        }
+
+    }
+
+    private void drawLineJustified(Canvas canvas, String line, float lineWidth) {
+        TextPaint paint = getPaint();
+
+        float emptySpace = textAreaWidth - lineWidth;
+        int spaces = line.split(" ").length - 1;
+        float newSpaceSize = (emptySpace / spaces) + spaceCharSize;
+
+        float charX = 0;
+
+        for (int i = 0; i < line.length(); i++) {
+            String character = String.valueOf(line.charAt(i));
+            float charWidth = StaticLayout.getDesiredWidth(character, paint);
+            if (!character.equals(" ")) {
+                canvas.drawText(character, charX, lineY, paint);
+            }
+
+            if (character.equals(" ") && i != line.length() - 1)
+                charX += newSpaceSize;
+            else
+                charX += charWidth;
+        }
+
     }
 
 

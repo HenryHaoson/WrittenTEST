@@ -1,4 +1,4 @@
-package com.zhuhao.wordtextview;
+package com.henryhaoson.expendview.read.view.WordView;
 
 import android.support.annotation.NonNull;
 
