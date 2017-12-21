@@ -19,6 +19,7 @@ public class EverydaySentenceHolder extends RecyclerView.ViewHolder {
     public EverydaySentenceHolder(View itemView) {
         super(itemView);
         everydayPic = itemView.findViewById(R.id.item_everyday_sentence_pic);
+        //设置初始时为不可点击，为后面点击重新加载做准备。
         everydayPic.setClickable(false);
     }
 }

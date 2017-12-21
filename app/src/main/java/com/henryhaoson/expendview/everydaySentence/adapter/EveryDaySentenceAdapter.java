@@ -19,7 +19,7 @@ import com.henryhaoson.expendview.R;
  * Date : 21/12/2017
  *
  * @Last Modified Time :21/12/2017
- * Description :
+ * Description :每日一句适配器
  */
 
 public class EveryDaySentenceAdapter extends RecyclerView.Adapter<EverydaySentenceHolder> {
