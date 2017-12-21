@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
-import com.bumptech.glide.load.engine.cache.DiskLruCacheFactory;
 import com.bumptech.glide.module.GlideModule;
 
 /**
@@ -18,9 +17,10 @@ import com.bumptech.glide.module.GlideModule;
 public class HenryGlideModule implements GlideModule {
     @Override
     public void applyOptions(Context context, GlideBuilder builder) {
-        int size = 1024 * 1024 * 1024;
-        String dir = "SDCard/Android/data/com/henry/expendView/images";
-        builder.setDiskCache(new DiskLruCacheFactory(dir, size));
+        int size = 250 * 1024 * 1024;
+//        String dir = "SDCard/Android/data/com/henry/expendView/images";
+//        builder.setDiskCache(new DiskLruCacheFactory(dir, size));
+//        builder.set
     }
 
     @Override

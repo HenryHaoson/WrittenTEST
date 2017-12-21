@@ -2,14 +2,13 @@ package com.henryhaoson.expendview.everydaySentence.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.henryhaoson.expendview.R;
-
-import java.util.List;
 
 /**
  * Author : zhuhao
@@ -20,10 +19,10 @@ import java.util.List;
  */
 
 public class EveryDaySentenceAdapter extends RecyclerView.Adapter<EverydaySentenceHolder> {
-    private List<String> picList;
+    private String[] picList;
     private Context mContext;
 
-    public EveryDaySentenceAdapter(Context context, List<String> list) {
+    public EveryDaySentenceAdapter(Context context, String[] list) {
         mContext = context;
         picList = list;
     }
@@ -31,14 +30,22 @@ public class EveryDaySentenceAdapter extends RecyclerView.Adapter<EverydaySenten
 
     @Override
     public EverydaySentenceHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+       Log.i("recyclerView","onCreateViewHolder");
         return new EverydaySentenceHolder(LayoutInflater.from(mContext)
-                .inflate(R.layout.item_everyday_sentence, null));
+                .inflate(R.layout.item_everyday_sentence, parent,false));
     }
 
     @Override
     public void onBindViewHolder(EverydaySentenceHolder holder, int position) {
-        Glide.with(mContext).load(picList.get(position)).
-                skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.ALL)
+        Log.i("recyclerView","onBindViewHolder");
+//        Glide.with(mContext).load(picList[position])
+//                .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                .error(R.drawable.default_pic)
+//                .into(holder.everydayPic);
+        Glide.with(mContext)
+                .load(picList[position])
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .error(R.drawable.default_pic)
                 .into(holder.everydayPic);
     }
 
@@ -49,6 +56,6 @@ public class EveryDaySentenceAdapter extends RecyclerView.Adapter<EverydaySenten
 
     @Override
     public int getItemCount() {
-        return picList.size();
+        return picList.length;
     }
 }
