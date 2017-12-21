@@ -28,10 +28,10 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void accept(@NonNull Boolean aBoolean) throws Exception {
                         if (aBoolean){
-                            startFragment(EveryDaySentenceFragment.newInstance());
+                            startFragment(MainFragment.newInstance());
                         }
                         else {
-                            startFragment(EveryDaySentenceFragment.newInstance());
+                            startFragment(MainFragment.newInstance());
                         }
                     }
                 });

@@ -66,9 +66,8 @@ public class WordTextView extends android.support.v7.widget.AppCompatTextView {
 
     private void setText() {
         mSpannableString = new SpannableString(mText);
-        //set highlight text
+        //设置高亮Spannable
         setHighLightSpan(mSpannableString);
-        //separate word
         if (language == 0) {//deal english
             dealEnglish();
         } else {//deal chinese

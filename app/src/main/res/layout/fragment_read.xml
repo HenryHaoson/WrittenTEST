@@ -12,6 +12,7 @@
         <com.zhuhao.wordtextview.WordTextView
             android:id="@+id/read_wordtextview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:justificationMode="inter_word"/>
     </LinearLayout>
 </ScrollView>

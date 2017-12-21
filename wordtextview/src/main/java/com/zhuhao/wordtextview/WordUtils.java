@@ -50,11 +50,11 @@ public class WordUtils {
     }
 
     /**
-     * Get every word's index array of text
+     * 获取要分割的下标
      *
-     * @param word the content
-     * @param ch   separate char
-     * @return index array
+     * @param word 文本对象
+     * @param ch   分割的字符
+     * @return 分割的下标集合
      */
     private static List<Integer> getSeparatorIndices(String word, char ch) {
         int pos = word.indexOf(ch);
