@@ -23,6 +23,7 @@ import java.util.List;
  */
 
 public class JustifyTextView extends android.support.v7.widget.AppCompatTextView {
+    Character[] arr = new Character[]{',', '.', ';', '!', '"', '，', '。', '！', '；', '、', '：', '“', '”', '?', '？'};
     //高亮字体画笔
     private TextPaint paint;
     private Paint bgPaint;
@@ -41,6 +42,7 @@ public class JustifyTextView extends android.support.v7.widget.AppCompatTextView
     private List<LineInfo> lineInfos = new ArrayList<>();
     public WordTextView.OnWordClickListener listener;
 
+    //是否有单词被点击。
     public boolean isClicked = false;
 
 
@@ -58,13 +60,24 @@ public class JustifyTextView extends android.support.v7.widget.AppCompatTextView
         bgPaint.setColor(highLightBackColor);
     }
 
+    /**
+     * 设置文本内容，调用setText方法
+     *
+     * @param str 文本
+     */
     public final void setContent(String str) {
+        // str=str.replaceAll(".","."+" ");
         super.setText(str);
         this.mText = str;
         requestLayout();
         invalidate();
     }
 
+    /**
+     * 设置单词点击监听器
+     *
+     * @param listener 监听器
+     */
     public void setOnWordClickListener(WordTextView.OnWordClickListener listener) {
         this.listener = listener;
     }
@@ -82,7 +95,8 @@ public class JustifyTextView extends android.support.v7.widget.AppCompatTextView
 
     /**
      * 设置两端对齐
-     * @param canvas
+     *
+     * @param canvas 画布
      */
     private void justifyDraw(Canvas canvas) {
 
@@ -118,29 +132,79 @@ public class JustifyTextView extends android.support.v7.widget.AppCompatTextView
                 lineInfo.setLineHeight(lineBaseline);
 
                 int i2 = paddingLeft;
-
                 for (String str : split) {
-                    
                     WordInfo wordInfo = new WordInfo();
                     //设置单词开始位置
                     wordInfo.setStart((float) i2);
                     //设置单词
-                    wordInfo.setWord(str);
-
+                    String word = str.replaceAll("[^\\w]","");
+                    wordInfo.setWord(word);
                     canvas.drawText(str, (float) i2, (float) lineBaseline, getPaint());
                     i2 = (int) (((float) i2) + (getPaint().measureText(str) + measureText));
-
                     //设置单词结束位置
                     wordInfo.setEnd((float) i2 - measureText);
                     //添加单词信息
                     lineInfo.wordInfos.add(wordInfo);
                 }
+
+                //笨方法为了解决bug" hello.world
+//                for (String str : split) {
+//                    String firstWord = null;
+//                    boolean isFirstWord = true;
+//                    String[] words = str.split("[^\\w]");
+//                    for (String word : words) {
+//                        if (words.length == 1) {
+//                            WordInfo wordInfo = new WordInfo();
+//                            //设置单词开始位置
+//                            wordInfo.setStart((float) i2);
+//                            //设置单词
+//                            wordInfo.setWord(word);
+//                            canvas.drawText(str, (float) i2, (float) lineBaseline, getPaint());
+//                            i2 = (int) (((float) i2) + (getPaint().measureText(str) + measureText));
+//                            //设置单词结束位置
+//                            wordInfo.setEnd((float) i2 - measureText);
+//                            //添加单词信息
+//                            lineInfo.wordInfos.add(wordInfo);
+//                            break;
+//                        } else {
+//                            if (isFirstWord) {
+//                                firstWord = word;
+//                            }
+//                            WordInfo wordInfo = new WordInfo();
+//                            //设置单词开始位置
+//                            wordInfo.setStart((float) i2);
+//                            //设置单词
+//                            wordInfo.setWord(word);
+//                            if (isFirstWord) {
+//                                canvas.drawText(word, (float) i2, (float) lineBaseline, getPaint());
+//                                i2 = (int) (((float) i2) + (getPaint().measureText(word) + measureText));
+//                                isFirstWord = false;
+//                            } else {
+//                                String second = str.replace(firstWord, "");
+//                                canvas.drawText(second, (float) i2, (float) lineBaseline, getPaint());
+//                                i2 = (int) (((float) i2) + (getPaint().measureText(str.replace(firstWord, "")) + measureText));
+//                            }
+//                            //设置单词结束位置
+//                            wordInfo.setEnd((float) i2 - measureText);
+//                            //添加单词信息
+//                            lineInfo.wordInfos.add(wordInfo);
+//                        }
+//                    }
+//                }
+
+
             }
             lineInfos.add(lineInfo);
             i++;
         }
     }
 
+    /**
+     * 判断是否点击到单词
+     *
+     * @param event 事件
+     * @return 消费事件
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
@@ -170,12 +234,23 @@ public class JustifyTextView extends android.support.v7.widget.AppCompatTextView
         return true;
     }
 
+    /**
+     * 初始化绘制高亮信息
+     *
+     * @param wordInfo 单词信息
+     * @param wordY    纵坐标
+     */
     public void highLightInfo(WordInfo wordInfo, float wordY) {
         this.wordInfo = wordInfo;
         currentWordY = wordY;
 
     }
 
+    /**
+     * 绘制高亮单词
+     *
+     * @param canvas 画布
+     */
     public void drawHighLight(Canvas canvas) {
         //画背景
         canvas.drawRect(wordInfo.getStart(), currentWordY + paint.getFontMetrics().ascent + paint.getFontMetrics().leading,
@@ -183,12 +258,6 @@ public class JustifyTextView extends android.support.v7.widget.AppCompatTextView
         //画高亮的单词
         canvas.drawText(wordInfo.getWord(), wordInfo.getStart(), currentWordY, paint);
 
-    }
-
-    public void setTextColor(int i) {
-        super.setTextColor(i);
-        getPaint().setColor(i);
-        invalidate();
     }
 
 
