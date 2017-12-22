@@ -37,8 +37,7 @@ public class JustifyTextView extends android.support.v7.widget.AppCompatTextView
     private WordInfo wordInfo;
     //当前单词的Y
     float currentWordY;
-    //当前行高度。
-    float currentLineHeight;
+
     private List<LineInfo> lineInfos = new ArrayList<>();
     public WordTextView.OnWordClickListener listener;
 
@@ -53,7 +52,7 @@ public class JustifyTextView extends android.support.v7.widget.AppCompatTextView
         super(context, attributeSet);
         this.mColor = getTextColors().getDefaultColor();
         getPaint().setColor(this.mColor);
-        paint = new TextPaint();
+        paint = new TextPaint(getPaint());
         paint.setColor(highLightColor);
         bgPaint = new Paint();
         bgPaint.setColor(highLightBackColor);
@@ -72,16 +71,19 @@ public class JustifyTextView extends android.support.v7.widget.AppCompatTextView
 
 
     protected void onDraw(Canvas canvas) {
-//        canvas.save();
-        if (null != mText&& !isClicked) {
+        //TODO 局部绘制
+        if (null != mText) {
             justifyDraw(canvas);
         }
-//        canvas.restore();
         if (isClicked) {
             drawHighLight(canvas);
         }
     }
 
+    /**
+     * 设置两端对齐
+     * @param canvas
+     */
     private void justifyDraw(Canvas canvas) {
 
         int lineCount = getLayout().getLineCount();
@@ -118,6 +120,7 @@ public class JustifyTextView extends android.support.v7.widget.AppCompatTextView
                 int i2 = paddingLeft;
 
                 for (String str : split) {
+                    
                     WordInfo wordInfo = new WordInfo();
                     //设置单词开始位置
                     wordInfo.setStart((float) i2);
@@ -146,22 +149,19 @@ public class JustifyTextView extends android.support.v7.widget.AppCompatTextView
                 float x = event.getX();
                 float y = event.getY();
                 Log.i("justify", "x=" + x + " y=" + y);
-                for (int i = 0; i < lineInfos.size(); i++) {
-                    LineInfo lineInfo = lineInfos.get(i);
+                for (LineInfo lineInfo : lineInfos) {
                     if (lineInfo.getLineHeight() > y) {
                         for (WordInfo wordInfo : lineInfo.wordInfos) {
                             if (wordInfo.getStart() <= x && wordInfo.getEnd() >= x) {
 
                                 listener.onClick(wordInfo.getWord());
-                                highLightInfo(wordInfo, lineInfo.getLineHeight(), i);
+                                highLightInfo(wordInfo, lineInfo.getLineHeight());
                                 isClicked = true;
-                                invalidate();
-
-                                break;
+                                postInvalidate();
+                                return true;
                             }
 
                         }
-                        isClicked = false;
                         break;
 
                     }
@@ -170,19 +170,19 @@ public class JustifyTextView extends android.support.v7.widget.AppCompatTextView
         return true;
     }
 
-    public void highLightInfo(WordInfo wordInfo, float wordY, int lineCount) {
+    public void highLightInfo(WordInfo wordInfo, float wordY) {
         this.wordInfo = wordInfo;
-        currentLineHeight = getLayout().getLineBaseline(lineCount);
         currentWordY = wordY;
 
     }
 
     public void drawHighLight(Canvas canvas) {
-     //   canvas.clipRect(wordInfo.getStart(), currentWordY - currentLineHeight,
-     //           wordInfo.getEnd(), currentWordY);
-        canvas.drawRect(wordInfo.getStart(), currentWordY - currentLineHeight,
-                wordInfo.getEnd(), currentWordY, bgPaint);
+        //画背景
+        canvas.drawRect(wordInfo.getStart(), currentWordY + paint.getFontMetrics().ascent + paint.getFontMetrics().leading,
+                wordInfo.getEnd(), currentWordY + paint.getFontMetrics().descent, bgPaint);
+        //画高亮的单词
         canvas.drawText(wordInfo.getWord(), wordInfo.getStart(), currentWordY, paint);
+
     }
 
     public void setTextColor(int i) {
@@ -193,6 +193,6 @@ public class JustifyTextView extends android.support.v7.widget.AppCompatTextView
 
 
     public interface onWordClickedListener {
-        public void onClicked(String word);
+        void onClicked(String word);
     }
 }
