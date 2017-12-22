@@ -1,9 +1,11 @@
 package com.henryhaoson.expendview.read;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.henryhaoson.expendview.R;
-import com.henryhaoson.expendview.read.view.WordView.AutoResizeTextView;
+import com.henryhaoson.expendview.read.view.WordView.JustifyTextView;
+import com.zhuhao.wordtextview.WordTextView;
 
 import cn.henryzhuhao.mainframe.frame.base.BaseFragment;
 
@@ -16,7 +18,7 @@ import cn.henryzhuhao.mainframe.frame.base.BaseFragment;
  */
 
 public class ReadFragment extends BaseFragment {
-    private AutoResizeTextView textView;
+    private JustifyTextView textView;
     public static ReadFragment newInstance() {
 
         Bundle args = new Bundle();
@@ -28,7 +30,7 @@ public class ReadFragment extends BaseFragment {
     @Override
     public void initView() {
         textView= view.findViewById(R.id.read_wordtextview);
-        textView.setText("KIEV — The European Union warned Ukraine on Thursday time was running out to" +
+        textView.setContent("KIEV — The European Union warned Ukraine on Thursday time was running out to" +
                 "revive shelved deals on free trade and political association by meeting the bloc's" +
                 "concerns over the jailing of opposition leader Yulia Tymoshenko and bringing in" +
                 "reforms.A senior EU official also made it clear the agreements would fall through if Ukraine" +
@@ -70,6 +72,13 @@ public class ReadFragment extends BaseFragment {
                 "The EU suspended some of its Ukraine financial aid programs after Kiev adopted a law" +
                 "on state procurement which Brussels said was riddled with loopholes and thus failed to" +
                 "ensure transparent and competitive procedures.");
+
+        textView.setOnWordClickListener(new WordTextView.OnWordClickListener() {
+            @Override
+            public void onClick(String word) {
+                Toast.makeText(getContext(),word,Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

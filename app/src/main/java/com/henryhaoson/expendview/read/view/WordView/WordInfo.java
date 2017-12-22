@@ -5,24 +5,31 @@ package com.henryhaoson.expendview.read.view.WordView;
  */
 
 public class WordInfo {
-    private int start;
-    private int end;
+    private String word;
+    private float start;
+    private float end;
 
-    public int getStart() {
+    public void setWord(String word) {
+        this.word = word;
+    }
+
+    public String getWord() {
+        return word;
+    }
+
+    public float getStart() {
         return start;
     }
 
-    public void setStart(int start) {
+    public void setStart(float start) {
         this.start = start;
     }
 
-    public int getEnd() {
-        return end;
-    }
-
-    public void setEnd(int end) {
+    public void setEnd(float end) {
         this.end = end;
     }
 
-
+    public float getEnd() {
+        return end;
+    }
 }
