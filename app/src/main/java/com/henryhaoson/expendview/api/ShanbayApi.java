@@ -4,7 +4,7 @@ import com.henryhaoson.expendview.entity.resEntity.WordExplainEntity;
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;
-import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Author : zhuhao
@@ -16,6 +16,6 @@ import retrofit2.http.Path;
 
 public interface ShanbayApi {
 
-    @GET("https://api.shanbay.com/bdc/search/?word={word}")
-    Observable<WordExplainEntity> getWordExplain(@Path("word") String word);
+    @GET("https://api.shanbay.com/bdc/search")
+    Observable<WordExplainEntity> getWordExplain(@Query("word") String word);
 }

@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.henryhaoson.expendview.R;
+import com.henryhaoson.expendview.read.ui.WordExplainView.WordExplainFragment;
 import com.henryhaoson.expendview.read.ui.WordView.JustifyTextView;
-import com.zhuhao.wordtextview.WordTextView;
 
 import cn.henryzhuhao.mainframe.frame.base.BaseFragment;
 
@@ -19,6 +19,7 @@ import cn.henryzhuhao.mainframe.frame.base.BaseFragment;
 
 public class ReadFragment extends BaseFragment {
     private JustifyTextView textView;
+    private WordExplainFragment fragment;
     public static ReadFragment newInstance() {
 
         Bundle args = new Bundle();
@@ -75,13 +76,10 @@ public class ReadFragment extends BaseFragment {
                 "The EU suspended some of its Ukraine financial aid programs after Kiev adopted a law" +
                 "on state procurement which Brussels said was riddled with loopholes and thus failed to" +
                 "ensure transparent and competitive procedures.");
+        fragment = WordExplainFragment.newInstance();
+       showFragment(fragment,R.id.read_word_explain_view);
 
-        textView.setOnWordClickListener(new WordTextView.OnWordClickListener() {
-            @Override
-            public void onClick(String word) {
-                Toast.makeText(getContext(),word,Toast.LENGTH_SHORT).show();
-            }
-        });
+
     }
 
     @Override
@@ -91,7 +89,20 @@ public class ReadFragment extends BaseFragment {
 
     @Override
     public void initListener() {
+        textView.setOnWordClickListener(new JustifyTextView.onWordClickedListener() {
+            @Override
+            public void onClicked(String word) {
+                Toast.makeText(getContext(),word,Toast.LENGTH_SHORT).show();
+                fragment.setWord(word);
+                fragment.show();
 
+            }
+
+            @Override
+            public void onNoWord() {
+                fragment.leave();
+            }
+        });
     }
 
     @Override

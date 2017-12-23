@@ -1,6 +1,11 @@
 package com.henryhaoson.expendview.read.ui.WordExplainView;
 
+import android.animation.ObjectAnimator;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.henryhaoson.expendview.R;
@@ -18,27 +23,58 @@ import cn.henryzhuhao.mainframe.frame.base.BaseFragment;
  */
 
 public class WordExplainFragment extends BaseFragment implements WordExplainView {
-    public int mHeight = 0;
+    public int height = 0;
 
-    private TextView word;
-    private TextView soundMark;
-    private TextView explain;
+    private RelativeLayout contentRl;
+    private TextView wordTv;
+    private TextView soundMarkTv;
+    private TextView explainTv;
+    private TextView errorTv;
+    private TextView loadTv;
+
+    private MediaPlayer mediaPlayer;
 
     private WordExplainPresenter presenter;
+
+    public static WordExplainFragment newInstance() {
+
+        Bundle args = new Bundle();
+
+        WordExplainFragment fragment = new WordExplainFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void initView() {
-        if (mHeight != 0) {
-            view.getLayoutParams().height = mHeight;
-        }
+        view.setVisibility(View.INVISIBLE);
 
-        word=view.findViewById(R.id.word_explain_word);
-        soundMark=view.findViewById(R.id.word_explain_sound_mark);
-        explain=view.findViewById(R.id.word_explain_explain);
+        contentRl=view.findViewById(R.id.word_explain_content);
+        wordTv = view.findViewById(R.id.word_explain_word);
+        soundMarkTv = view.findViewById(R.id.word_explain_sound_mark);
+        explainTv = view.findViewById(R.id.word_explain_explain);
+        errorTv = view.findViewById(R.id.word_explain_error);
+        loadTv = view.findViewById(R.id.word_explain_load);
+
+    }
+
+    public void setWord(String word) {
+        presenter.getExplain(word);
+        contentRl.setVisibility(View.INVISIBLE);
+        errorTv.setVisibility(View.INVISIBLE);
+        showLoadingContentView();
+
     }
 
     @Override
     public void initData(Bundle savedInstanceState) {
-
+        wordTv.post(new Runnable() {
+            @Override
+            public void run() {
+                height = view.getHeight();
+            }
+        });
+        mediaPlayer = MediaPlayer.create(getContext(), Uri.EMPTY);
     }
 
     @Override
@@ -48,17 +84,18 @@ public class WordExplainFragment extends BaseFragment implements WordExplainView
 
     @Override
     public void showLoadingContentView() {
-
+        contentRl.setVisibility(View.INVISIBLE);
+        loadTv.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void removeLoadingContentView() {
-
+        loadTv.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void initPresenter() {
-        presenter=new WordExplainPresenter(this);
+        presenter = new WordExplainPresenter(this);
     }
 
     @Override
@@ -66,17 +103,35 @@ public class WordExplainFragment extends BaseFragment implements WordExplainView
         return R.layout.fragment_word_explain;
     }
 
-    public void setHeight(int height) {
-        mHeight = height;
-    }
-
     @Override
     public void getExplainSucceed(String word, String soundMark, String soundUrl, String explain) {
-
+        contentRl.setVisibility(View.VISIBLE);
+        errorTv.setVisibility(View.INVISIBLE);
+        removeLoadingContentView();
+        wordTv.setText(word);
+        soundMarkTv.setText(soundMark);
+        explainTv.setText(explain);
     }
 
     @Override
     public void getExplainFailed(String error) {
+        removeLoadingContentView();
+        showErrorView();
+    }
+
+    public void showErrorView() {
+        contentRl.setVisibility(View.INVISIBLE);
+        errorTv.setVisibility(View.VISIBLE);
+    }
+
+    public void show() {
+        view.setVisibility(View.VISIBLE);
+//        contentRl.setVisibility(View.VISIBLE);
+        ObjectAnimator.ofFloat(view, "translationY", 0).start();
+    }
+
+    public void leave() {
+        ObjectAnimator.ofFloat(view, "translationY", height).start();
 
     }
 }

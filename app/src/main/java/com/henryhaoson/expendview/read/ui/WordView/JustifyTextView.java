@@ -9,8 +9,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import com.zhuhao.wordtextview.WordTextView;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +38,7 @@ public class JustifyTextView extends android.support.v7.widget.AppCompatTextView
     float currentWordY;
 
     private List<LineInfo> lineInfos = new ArrayList<>();
-    public WordTextView.OnWordClickListener listener;
+    public onWordClickedListener listener;
 
     //是否有单词被点击。
     public boolean isClicked = false;
@@ -78,7 +76,7 @@ public class JustifyTextView extends android.support.v7.widget.AppCompatTextView
      *
      * @param listener 监听器
      */
-    public void setOnWordClickListener(WordTextView.OnWordClickListener listener) {
+    public void setOnWordClickListener(onWordClickedListener listener) {
         this.listener = listener;
     }
 
@@ -214,11 +212,11 @@ public class JustifyTextView extends android.support.v7.widget.AppCompatTextView
                 float y = event.getY();
                 Log.i("justify", "x=" + x + " y=" + y);
                 for (LineInfo lineInfo : lineInfos) {
-                    if (lineInfo.getLineHeight() > y) {
+                    if (lineInfo.getLineHeight() >= y&& y>=lineInfo.getLineHeight() -getLineHeight()) {
                         for (WordInfo wordInfo : lineInfo.wordInfos) {
                             if (wordInfo.getStart() <= x && wordInfo.getEnd() >= x) {
 
-                                listener.onClick(wordInfo.getWord());
+                                listener.onClicked(wordInfo.getWord());
                                 highLightInfo(wordInfo, lineInfo.getLineHeight());
                                 isClicked = true;
                                 postInvalidate();
@@ -226,10 +224,9 @@ public class JustifyTextView extends android.support.v7.widget.AppCompatTextView
                             }
 
                         }
-                        break;
-
                     }
                 }
+                listener.onNoWord();
         }
         return true;
     }
@@ -263,5 +260,6 @@ public class JustifyTextView extends android.support.v7.widget.AppCompatTextView
 
     public interface onWordClickedListener {
         void onClicked(String word);
+        void onNoWord();
     }
 }
