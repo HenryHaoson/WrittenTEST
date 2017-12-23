@@ -1,15 +1,15 @@
 package com.henryhaoson.expendview.read.ui.WordExplainView;
 
 import android.animation.ObjectAnimator;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.henryhaoson.expendview.R;
 import com.henryhaoson.expendview.read.ui.WordExplainView.presenter.WordExplainPresenter;
+import com.henryhaoson.expendview.read.ui.WordExplainView.utils.Player;
 import com.henryhaoson.expendview.read.ui.WordExplainView.view.WordExplainView;
 
 import cn.henryzhuhao.mainframe.frame.base.BaseFragment;
@@ -24,6 +24,7 @@ import cn.henryzhuhao.mainframe.frame.base.BaseFragment;
 
 public class WordExplainFragment extends BaseFragment implements WordExplainView {
     public int height = 0;
+    String soundUrl;
 
     private RelativeLayout contentRl;
     private TextView wordTv;
@@ -32,7 +33,9 @@ public class WordExplainFragment extends BaseFragment implements WordExplainView
     private TextView errorTv;
     private TextView loadTv;
 
-    private MediaPlayer mediaPlayer;
+    private ImageView sound;
+
+    private Player soundPlayer;
 
     private WordExplainPresenter presenter;
 
@@ -55,6 +58,7 @@ public class WordExplainFragment extends BaseFragment implements WordExplainView
         explainTv = view.findViewById(R.id.word_explain_explain);
         errorTv = view.findViewById(R.id.word_explain_error);
         loadTv = view.findViewById(R.id.word_explain_load);
+        sound=view.findViewById(R.id.word_explain_sound);
 
     }
 
@@ -68,18 +72,30 @@ public class WordExplainFragment extends BaseFragment implements WordExplainView
 
     @Override
     public void initData(Bundle savedInstanceState) {
+        soundPlayer=new Player();
         wordTv.post(new Runnable() {
             @Override
             public void run() {
                 height = view.getHeight();
             }
         });
-        mediaPlayer = MediaPlayer.create(getContext(), Uri.EMPTY);
+
     }
 
     @Override
     public void initListener() {
+        sound.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
 
+                    @Override
+                    public void run() {
+                        soundPlayer.playUrl(soundUrl);
+                    }
+                }).start();
+            }
+        });
     }
 
     @Override
@@ -111,6 +127,7 @@ public class WordExplainFragment extends BaseFragment implements WordExplainView
         wordTv.setText(word);
         soundMarkTv.setText(soundMark);
         explainTv.setText(explain);
+        this.soundUrl = soundUrl;
     }
 
     @Override
