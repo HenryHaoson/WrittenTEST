@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.henryhaoson.expendview.R;
-import com.henryhaoson.expendview.read.view.WordView.JustifyTextView;
+import com.henryhaoson.expendview.read.ui.WordView.JustifyTextView;
 import com.zhuhao.wordtextview.WordTextView;
 
 import cn.henryzhuhao.mainframe.frame.base.BaseFragment;

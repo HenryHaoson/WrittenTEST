@@ -1,4 +1,4 @@
-package com.henryhaoson.expendview.read.view.WordView;
+package com.henryhaoson.expendview.read.ui.WordExplainView.view.WordView;
 
 import org.junit.Test;
 

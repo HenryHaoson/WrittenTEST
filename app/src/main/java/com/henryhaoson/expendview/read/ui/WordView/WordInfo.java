@@ -1,4 +1,4 @@
-package com.henryhaoson.expendview.read.view.WordView;
+package com.henryhaoson.expendview.read.ui.WordView;
 
 /**
  * Created by zhuhao on 17/7/2017.
